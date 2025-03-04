@@ -25,9 +25,7 @@ export async function signup(formData: FormData) {
 
   users.push({ name, email, password: hashedPassword });
   writeUsers(users);
-
-  const token = jwt.sign({ email }, process.env.JWT_SECRET!, { expiresIn: "1h" });
-
+  
   return { success: true, message: "Signup successful", token };
 }
 
@@ -51,7 +49,7 @@ export async function login(formData: FormData) {
     return { success: false, message: "Invalid credentials." };
   }
 
-  const token = jwt.sign({ email }, process.env.JWT_SECRET!, { expiresIn: "1h" });
+  const token = jwt.sign({ email }, process.env.JWT_SECRET!);
 
   return { success: true, message: "Login successful", token };
 }

@@ -2,7 +2,7 @@
 
 import { signup } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { SignupFormSchema } from "@/app/lib/definitions";
 
@@ -12,6 +12,14 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        router.push("/dashboard");
+      }
+    }, [router]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -90,7 +98,7 @@ export default function Signup() {
             disabled={isSubmitting}
           />
         </div>
-        <button type="submit" disabled={isSubmitting}>
+        <button type="submit" disabled={isSubmitting} className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
           {isSubmitting ? "Signing Up..." : "Sign Up"}
         </button>
       </form>
