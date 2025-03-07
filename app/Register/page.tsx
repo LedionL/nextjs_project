@@ -13,14 +13,6 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-
-    useEffect(() => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        router.push("/dashboard");
-      }
-    }, [router]);
-
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSubmitting(true);
@@ -48,7 +40,6 @@ export default function Signup() {
     const result = await signup(formData);
 
     if (result.success) {
-      localStorage.setItem("token", result.token!);
       toast.success(`Sign up successful! Welcome, ${name}!`);
 
       setTimeout(() => {

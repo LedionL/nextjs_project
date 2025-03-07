@@ -2,7 +2,7 @@
 
 import { login } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { toast } from "react-toastify";
 import { LoginFormSchema } from "@/app/lib/definitions";
 
@@ -11,13 +11,6 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      router.push("/dashboard");
-    }
-  }, [router]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -45,7 +38,7 @@ export default function Login() {
     const result = await login(formData);
 
     if (result.success) {
-      localStorage.setItem("token", result.token!);
+      document.cookie = `token=${result.token}; path=/; Secure; SameSite=Strict;`;
       toast.success("Login successful!");
 
       setTimeout(() => {
@@ -84,7 +77,7 @@ export default function Login() {
             disabled={isSubmitting}
           />
         </div>
-        <button type="submit" disabled={isSubmitting} className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+        <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Logging In..." : "Log In"}
         </button>
       </form>

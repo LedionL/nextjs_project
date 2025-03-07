@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { SignupFormSchema, LoginFormSchema } from "@/app/lib/definitions";
 import { readUsers, writeUsers } from "@/app/actions/users";
+import { cookies } from "next/headers";
 
 export async function signup(formData: FormData) {
   const name = formData.get("name")?.toString();
