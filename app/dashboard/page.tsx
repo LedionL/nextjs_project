@@ -7,7 +7,7 @@ export default function Home() {
   const router = useRouter();
 
   const handleLogout = () => {
-    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+    localStorage.removeItem("token");
     router.push("/login");
   };
 
