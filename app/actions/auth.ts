@@ -1,9 +1,11 @@
 "use server";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import { SignupFormSchema, LoginFormSchema } from "@/app/lib/definitions";
-import { readUsers, writeUsers } from "@/app/actions/users";
-import { cookies } from "next/headers";
+
+import { PrismaClient } from '@prisma/client';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import { SignupFormSchema, LoginFormSchema } from '@/app/lib/definitions';
+
+const prisma = new PrismaClient();
 
 export async function signup(formData: FormData) {
   const name = formData.get("name")?.toString();
@@ -18,16 +20,23 @@ export async function signup(formData: FormData) {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const users = readUsers();
+  const existingUser = await prisma.user.findUnique({
+    where: { email },
+  });
 
-  if (users.some((u) => u.email === email)) {
+  if (existingUser) {
     return { success: false, message: "Email already exists." };
   }
 
-  users.push({ name, email, password: hashedPassword });
-  writeUsers(users);
-  
-  return { success: true, message: "Signup successful", token };
+  const user = await prisma.user.create({
+    data: {
+      name,
+      email,
+      password: hashedPassword,
+    },
+  });
+
+  return { success: true, message: "Signup successful"};
 }
 
 export async function login(formData: FormData) {
@@ -38,8 +47,9 @@ export async function login(formData: FormData) {
     return { success: false, message: "All fields are required." };
   }
 
-  const users = readUsers();
-  const user = users.find((u) => u.email === email);
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
 
   if (!user) {
     return { success: false, message: "Invalid credentials." };
@@ -50,7 +60,7 @@ export async function login(formData: FormData) {
     return { success: false, message: "Invalid credentials." };
   }
 
-  const token = jwt.sign({ email }, process.env.JWT_SECRET!);
+  const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!);
 
   return { success: true, message: "Login successful", token };
 }
