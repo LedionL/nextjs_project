@@ -1,42 +1,41 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("token")?.value;
 
-  const isAuthenticated = () => {
+  const isAuthenticated = async () => {
     if (!token) {
       return false;
     }
-    // try {
-      // jwt.verify(token, JWT_SECRET);
+    try {
+      await jwtVerify(token, JWT_SECRET);
       console.log("Token is valid");
       return true;
-    // } catch (error) {
-    //   console.log("Token verification failed", error);
-    //   return false;
-    // }
+    } catch (error) {
+      console.log("Token verification failed", error);
+      return false;
+    }
   };
 
   if (pathname.startsWith("/login") || pathname.startsWith("/Register")) {
-    if (isAuthenticated()) {
+    if (await isAuthenticated()) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
+    return NextResponse.next();
   }
 
-  if (pathname.startsWith("/dashboard")) {
-    if (!isAuthenticated()) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+  if (!(await isAuthenticated())) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/login", "/Register", "/dashboard"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
