@@ -7,25 +7,23 @@ export async function GET() {
   try {
     const cars = await prisma.car.findMany({
       take: 16,
-      include: {
-        owner: true 
-      }
+      include: { owner: true },
     });
 
-    const transformedCars = cars.map((car: { id: any; brand: any; model: any; fuelType: any; price: any; owner: { name: any; }; }) => ({
+    const formattedCars = cars.map(car => ({
       id: car.id,
       brand: car.brand,
       model: car.model,
       fuelType: car.fuelType,
       price: car.price,
-      ownerName: car.owner.name
+      ownerName: car.owner.name,
     }));
 
-    return NextResponse.json(transformedCars);
+    return NextResponse.json(formattedCars);
   } catch (error) {
     console.error('Error fetching cars:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch cars', details: error },
+      { error: 'Failed to fetch cars' },
       { status: 500 }
     );
   } finally {
