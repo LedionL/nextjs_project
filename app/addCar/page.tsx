@@ -4,12 +4,7 @@ import { useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import Link from 'next/link';
 import Header from '../components/header';
-
-
-type ResponseState = {
-  success: boolean;
-  message: string;
-} | null;
+import { ResponseState } from '../types';
 
 export default function AddCarPage() {
   const [state, setState] = useState<ResponseState>(null);
@@ -48,86 +43,111 @@ export default function AddCarPage() {
 
   return (
     <><Header />
-    <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Add New Car</h1>
+    <div className="min-h-screen bg-gray-900 pt-20">
+      <div className="container mx-auto px-6 py-12 max-w-2xl">
+        <h1 className="text-3xl font-bold text-white mb-8 border-b border-amber-500 pb-2">
+          Add New Vehicle
+        </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block mb-2">Brand</label>
-          <input
-            type="text"
-            name="brand"
-            required
-            className="w-full p-2 border rounded" />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Brand
+            </label>
+            <input
+              type="text"
+              name="brand"
+              required
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-white placeholder-gray-500 transition-all"
+              placeholder="The Vehicle's Brand"
+            />
+          </div>
 
-        <div>
-          <label className="block mb-2">Model</label>
-          <input
-            type="text"
-            name="model"
-            required
-            className="w-full p-2 border rounded" />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Model
+            </label>
+            <input
+              type="text"
+              name="model"
+              required
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-white placeholder-gray-500 transition-all"
+              placeholder="The Vehicle's Models"
+            />
+          </div>
 
-        <div>
-          <label className="block mb-2">Fuel Type</label>
-          <select
-            name="fuelType"
-            required
-            className="w-full p-2 border rounded"
-          >
-            <option value="">Select Fuel Type</option>
-            <option value="Gasoline">Gasoline</option>
-            <option value="Diesel">Diesel</option>
-            <option value="Electric">Electric</option>
-            <option value="Hybrid">Hybrid</option>
-            <option value="Petrol">Petrol</option>
-          </select>
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Fuel Type
+            </label>
+            <select
+              name="fuelType"
+              required
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-white appearance-none"
+            >
+              <option value="" disabled className="text-gray-500">Select Fuel Type</option>
+              <option value="Gasoline" className="bg-gray-800">Gasoline</option>
+              <option value="Diesel" className="bg-gray-800">Diesel</option>
+              <option value="Petrol" className="bg-gray-800">Petrol</option> 
+              <option value="Electric" className="bg-gray-800">Electric</option>
+              <option value="Hybrid" className="bg-gray-800">Hybrid</option>
+            </select>
+          </div>
 
-        <div>
-          <label className="block mb-2">Price per Day</label>
-          <input
-            type="number"
-            name="price"
-            step="0.01"
-            required
-            className="w-full p-2 border rounded" />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Price per Day (USD)
+            </label>
+            <input
+              type="number"
+              name="price"
+              required
+              className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-white placeholder-gray-500 transition-all"
+              placeholder="Daily Price to Rent"
+            />
+          </div>
 
-        <div>
-          <label className="block mb-2">Owner Email</label>
-          <input
-            type="email"
-            name="email"
-            required
-            className="w-full p-2 border rounded" />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Owner Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              required
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-white placeholder-gray-500 transition-all"
+              placeholder="owner@luxurycars.com"
+            />
+          </div>
 
-        {state?.message && (
-          <p className={`p-2 rounded ${state.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-            {state.message}
-          </p>
-        )}
+          {state?.message && (
+            <div className={`p-4 rounded-lg border ${
+              state.success 
+                ? 'bg-green-900/30 border-green-800 text-green-400' 
+                : 'bg-red-900/30 border-red-800 text-red-400'
+            }`}>
+              {state.message}
+            </div>
+          )}
 
-        <div className="flex gap-4">
-          <button
-            type="submit"
-            disabled={isPending}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
-          >
-            {isPending ? 'Adding...' : 'Add Car'}
-          </button>
+          <div className="flex gap-4 mt-8">
+            <button
+              type="submit"
+              disabled={isPending}
+              className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-1"
+            >
+              {isPending ? 'Adding Luxury Vehicle...' : 'Add to Fleet'}
+            </button>
 
-          <Link
-            href="/dashboard"
-            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-          >
-            Back to Dashboard
-          </Link>
-        </div>
-      </form>
+            <Link
+              href="/dashboard"
+              className="border border-amber-500 text-amber-500 hover:bg-amber-500/10 px-6 py-3 rounded-lg font-medium transition-colors text-center flex-1"
+            >
+              Back to Dashboard
+            </Link>
+          </div>
+        </form>
+      </div>
     </div></>
   );
 }

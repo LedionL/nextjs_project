@@ -1,6 +1,6 @@
 "use client";
 
-import { login } from "@/app/actions/auth";
+import { login } from "../actions/logIn";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { toast } from "react-toastify";
@@ -52,41 +52,62 @@ export default function Login() {
   }
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} noValidate>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={isSubmitting}
-          />
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-20">
+      <main className="container mx-auto px-6 py-12 max-w-md">
+        <div className="bg-gray-800/50 backdrop-blur-lg border border-amber-500/20 rounded-xl p-8 shadow-xl">
+          <h1 className="text-3xl font-bold text-amber-500 mb-8 text-center">
+            Welcome Back
+          </h1>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-amber-500/80 mb-2">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="luxury@driver.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
+                className="w-full px-4 py-3 bg-gray-700 border border-amber-500/30 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-white placeholder-gray-400 transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-amber-500/80 mb-2">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isSubmitting}
+                className="w-full px-4 py-3 bg-gray-700 border border-amber-500/30 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-white placeholder-gray-400 transition-all"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50"
+            >
+              {isSubmitting ? "Entering..." : "Access Vehicles"}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => router.push("/Register")}
+              className="text-amber-500 hover:text-amber-400 text-sm font-medium transition-colors"
+            >
+              New member? Join the Club today.
+            </button>
+          </div>
         </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={isSubmitting}
-          />
-        </div>
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Logging In..." : "Log In"}
-        </button>
-      </form>
-      <button
-        onClick={() => router.push("/Register")}
-        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Register
-      </button>
+      </main>
     </div>
   );
 }
